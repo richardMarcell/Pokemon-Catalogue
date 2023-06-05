@@ -4,14 +4,20 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+interface PokemonImageJson {
+    name: string;
+    image_url: string;
+}
+
 export const main = async () => {
     try {
         const csvFilePath = "prisma/pokemon.csv"; // Path file CSV Anda
         const pokemonImageFilePath = "prisma/pokemon_image.json"; // Path file CSV Anda
         const pokemons: any[] = [];
 
-        const pokemonImagesJson: { name: string; image_url: string }[] =
-            JSON.parse(fs.readFileSync(pokemonImageFilePath, "utf-8"));
+        const pokemonImagesJson: PokemonImageJson[] = JSON.parse(
+            fs.readFileSync(pokemonImageFilePath, "utf-8")
+        );
 
         // mengambil gambar dengan key value
         // const pokemonImages: { [key: string]: string } = {};
