@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Abilities {
+  id                      Int             @id @default(autoincrement())
+  name                    String          @db.VarChar(50)
+  pokemon_id              Int
+  pokemon                 Pokemon         @relation(fields: [pokemon_id], references: [id])
+}
+
+model Pokemon {
+  id                      Int             @id @default(autoincrement())
+  Abilities               Abilities[]
+  against_bug             Float
+  against_dark            Float
+  against_dragon          Float
+  against_electric        Float
+  against_fairy           Float
+  against_fight           Float
+  against_fire            Float
+  against_flying          Float
+  against_ghost           Float
+  against_grass           Float
+  against_ground          Float
+  against_ice             Float
+  against_normal          Float
+  against_poison          Float
+  against_psychic         Float
+  against_rock            Float
+  against_steel           Float
+  against_water           Float
+  attack                  Float
+  base_egg_steps          Float
+  base_happiness          Float
+  base_total              Float
+  capture_rate            Float
+  classification          String          @db.VarChar(200)
+  defense                 Float
+  experience_growth       Float
+  height_m                Float
+  hp                      Float
+  japanese_name           String          @db.VarChar(200)
+  name                    String          @db.VarChar(200)
+  percentage_male         Float
+  pokedex_number          Float
+  sp_attack               Float
+  sp_defense              Float
+  speed                   Float
+  type1                   String          @db.VarChar(50)
+  type2                   String          @db.VarChar(50)
+  weight_kg               Float
+  generation              Float
+  is_legendary            Boolean
+}
