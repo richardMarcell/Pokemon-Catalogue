@@ -6,22 +6,42 @@ const prisma = new PrismaClient();
 
 export const main = async () => {
     try {
-        const csvPath = "prisma/pokemon.csv"; // Path file CSV Anda
-        const results: any[] = [];
+        const csvFilePath = "prisma/pokemon.csv"; // Path file CSV Anda
+        const pokemonImageFilePath = "prisma/pokemon_image.json"; // Path file CSV Anda
+        const pokemons: any[] = [];
+
+        const pokemonImagesJson: { name: string; image_url: string }[] =
+            JSON.parse(fs.readFileSync(pokemonImageFilePath, "utf-8"));
+
+        // mengambil gambar dengan key value
+        // const pokemonImages: { [key: string]: string } = {};
+
+        // for (let i = 0; i < pokemonImagesJson.length; i++) {
+        //     const { name, image_url } = pokemonImagesJson[i];
+        //     pokemonImages[name] = image_url;
+        // }
+
+        // mengambil gambar dengan menggunakan hashmap
+        const pokemonImages = new Map();
+        pokemonImagesJson.forEach((pokemonImage) => {
+            pokemonImages.set(pokemonImage.name, pokemonImage.image_url);
+        });
 
         // Membaca file CSV
-        fs.createReadStream(csvPath)
+        fs.createReadStream(csvFilePath)
             .pipe(csvParser())
-            .on("data", (data) => {
-                results.push(data);
+            .on("data", (rowOfCsv) => {
+                pokemons.push(rowOfCsv);
             })
             .on("end", async () => {
                 // Memasukkan data ke database menggunakan Prisma
-                for (let i = 0; i < results.length; i++) {
-                    const pokemon = results[i];
+                for (let i = 0; i < pokemons.length; i++) {
+                    const pokemon = pokemons[i];
+
+                    // mengubah nama pokemon menjadi huruf kecil semua
+                    const pokemonName = pokemon.name.toLowerCase();
                     const storedPokemon = await prisma.pokemon.create({
                         data: {
-                            id: i + 1,
                             against_bug: Number(pokemon.against_bug),
                             against_dark: Number(pokemon.against_dark),
                             against_dragon: Number(pokemon.against_dragon),
@@ -64,6 +84,8 @@ export const main = async () => {
                             weight_kg: Number(pokemon.weight_kg),
                             generation: Number(pokemon.generation),
                             is_legendary: Boolean(pokemon.is_legendary),
+                            // image: pokemonImages[pokemonName], //dengan key value
+                            image: pokemonImages.get(pokemonName), //dengan hashmap
                         },
                     });
 
@@ -88,11 +110,9 @@ export const main = async () => {
                         });
                     }
                 }
-
-                console.log("Data berhasil dipindahkan ke database.");
             });
     } catch (error) {
-        console.error("Terjadi kesalahan:", error);
+        console.error(error);
     } finally {
         await prisma.$disconnect();
     }

@@ -16,7 +16,7 @@ model Abilities {
 
 model Pokemon {
   id                      Int             @id @default(autoincrement())
-  Abilities               Abilities[]
+  abilities               Abilities[]
   against_bug             Float
   against_dark            Float
   against_dragon          Float
@@ -57,4 +57,5 @@ model Pokemon {
   weight_kg               Float
   generation              Float
   is_legendary            Boolean
+  image                   String?      
 }

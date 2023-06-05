@@ -29,6 +29,7 @@ import {
     TagRightIcon,
     TagCloseButton,
 } from "@chakra-ui/react";
+import { color } from "framer-motion";
 
 interface PokemonProps {
     pokemons: Pokemon[];
@@ -37,7 +38,7 @@ interface PokemonProps {
 const PokemonList = ({ pokemons }: PokemonProps) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [pokemon, setPokemon] = useState<Pokemon>({
-        abbilities: "",
+        id: 0,
         against_bug: 0,
         against_dark: 0,
         against_dragon: 0,
@@ -52,7 +53,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         against_ice: 0,
         against_normal: 0,
         against_poison: 0,
-        against_physic: 0,
+        against_psychic: 0,
         against_rock: 0,
         against_steel: 0,
         against_water: 0,
@@ -68,7 +69,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         hp: 0,
         japanese_name: "",
         name: "",
-        persentage_male: 0,
+        percentage_male: 0,
         pokedex_number: 0,
         sp_attack: 0,
         sp_defense: 0,
@@ -78,10 +79,45 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         weight_kg: 0,
         generation: 0,
         is_legendary: false,
+        image: "",
+        abilities: [],
     });
 
-    const genders: string[] = ["Male", "Famale"];
-    const classifications: string[] = ["Seed Pokemon", "Ballon Pokemon", "Drill Pokemon" ]
+    const [genders, setGenders] = useState<string[]>([
+        "Mayoritas Male",
+        "Minoritas Male",
+        "Balance",
+        "Mayoritas Famale",
+        "Minoritas Famale",
+    ]);
+
+    const [classifications, setClassifications] = useState<string[]>([
+        "Seed Pokémon",
+        "Lizard Pokémon",
+        "Flame Pokémon",
+        "Tiny Turtle Pokémon",
+        "Turtle Pokémon",
+        "Shellfish Pokémon",
+        "Worm Pokémon",
+        "Cocoon Pokémon",
+        "Butterfly Pokémon",
+        "Hairy Pokémon",
+        "Poison Bee Pokémon",
+        "Tiny Bird Pokémon",
+        "Bird Pokémon",
+        "Mouse Pokémon",
+        "Beak Pokémon",
+        "Snake Pokémon",
+        "Cobra Pokémon",
+        "Poison Pin Pokémon",
+        "Drill Pokémon",
+        "Fairy Pokémon",
+        "Fox Pokémon",
+        "Balloon Pokémon",
+        "Bat Pokémon",
+        "Weed Pokémon",
+        "Flower Pokémon",
+    ]);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -95,90 +131,109 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
 
     return (
         <div>
-            <FormControl mb="4" mt="4">
-                <FormLabel ml="80px">Search By Name</FormLabel>
-                <Input
-                    type="search"
-                    width="600px"
-                    ml="80px"
-                    placeholder="search pokemon"
-                    bgColor="InfoBackground"
-                    py="2"
-                    onChange={handleSearchChange}
-                />
-            </FormControl>
+            <Box width="">
+                <Flex wrap="wrap">
+                    <FormControl mb="4" mt="4">
+                        <FormLabel ml="80px">Search By Name</FormLabel>
+                        <Input
+                            type="search"
+                            width="600px"
+                            ml="80px"
+                            placeholder="search pokemon"
+                            bgColor="InfoBackground"
+                            py="2"
+                            onChange={handleSearchChange}
+                        />
+                    </FormControl>
 
-            <FormControl mb="4" mt="4">
-                <FormLabel ml="80px">Filter By Gender</FormLabel>
-                <Input
-                    type="text"
-                    width="600px"
-                    ml="80px"
-                    placeholder="Input Male Or Famale"
-                    bgColor="InfoBackground"
-                    py="2"
-                    name="genderTag"
-                />
-                <Box
-                    width="600px"
-                    ml="80px"
-                    my="20px"
-                    borderRadius="10px"
-                    height="55px"
-                    border="1px"
-                    p="10px"
-                >
-                    {genders.map((gender) => (
-                        <Tag
-                            size="lg"
-                            key="lg"
-                            borderRadius="full"
-                            variant="solid"
-                            colorScheme="green"
-                            mx="5px"
+                    <FormControl mb="4" mt="4">
+                        <FormLabel ml="80px">Filter By Gender</FormLabel>
+                        <Box
+                            width="600px"
+                            ml="80px"
+                            mt="20px"
+                            mb="50px"
+                            height="55px"
+                            p="10px"
                         >
-                            <TagLabel>{gender}</TagLabel>
-                            <TagCloseButton />
-                        </Tag>
-                    ))}
-                </Box>
-            </FormControl>
+                            <Flex
+                                justifyContent="center"
+                                alignItems="center"
+                                wrap="wrap"
+                            >
+                                {genders.map((gender) => (
+                                    <Tag
+                                        size="lg"
+                                        borderRadius="full"
+                                        variant="solid"
+                                        colorScheme="green"
+                                        mx="5px"
+                                        my="5px"
+                                        cursor="pointer"
+                                    >
+                                        <TagLabel>{gender}</TagLabel>
+                                    </Tag>
+                                ))}
+                            </Flex>
+                        </Box>
+                        <Box
+                            width="600px"
+                            ml="80px"
+                            mt="30px"
+                            mb="40px"
+                            height="100px"
+                            p="10px"
+                            border="1px"
+                            borderRadius="20px"
+                        ></Box>
+                    </FormControl>
 
-            <FormControl mb="4" mt="5">
-                <FormLabel ml="80px">Filter By Classification</FormLabel>
-                <Input
-                    type="text"
-                    width="600px"
-                    ml="80px"
-                    placeholder="Input Classification"
-                    bgColor="InfoBackground"
-                    py="2"
-                    name="classificationTag"
-                />
-                <Box
-                    width="600px"
-                    ml="80px"
-                    my="20px"
-                    borderRadius="10px"
-                    height="55px"
-                    border="1px"
-                    p="10px"
-                >
-                    {classifications.map((classification) => (
-                        <Tag
-                            size="lg"
-                            key="lg"
-                            borderRadius="full"
-                            variant="solid"
-                            colorScheme="green"
-                            mx="5px"
+                    <FormControl mb="4" mt="4">
+                        <FormLabel ml="80px">
+                            Filter By Classification
+                        </FormLabel>
+                        <Box
+                            width="600px"
+                            ml="80px"
+                            mt="20px"
+                            mb="300px"
+                            height="55px"
+                            p="10px"
                         >
-                            <TagLabel>{classification}</TagLabel>
-                            <TagCloseButton />
-                        </Tag>
-                    ))}
-                </Box>
-            </FormControl>
+                            <Flex
+                                justifyContent="center"
+                                alignItems="center"
+                                wrap="wrap"
+                            >
+                                {classifications.map((classification) => (
+                                    <Tag
+                                        size="lg"
+                                        borderRadius="full"
+                                        variant="solid"
+                                        colorScheme="blue"
+                                        mx="5px"
+                                        my="5px"
+                                        cursor="pointer"
+                                    >
+                                        <TagLabel>{classification}</TagLabel>
+                                    </Tag>
+                                ))}
+                            </Flex>
+                        </Box>
+                        <Box
+                            width="600px"
+                            ml="80px"
+                            mt="30px"
+                            mb="40px"
+                            height="100px"
+                            p="10px"
+                            border="1px"
+                            borderRadius="20px"
+                        ></Box>
+                    </FormControl>
+                </Flex>
+            </Box>
+
             <Box mt="10">
                 <Flex wrap="wrap" alignItems="center" justifyContent="center">
                     {filteredPokemons.map((pokemon) => (
@@ -191,7 +246,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                             onClick={() => {
                                 onOpen(), setPokemon(pokemon);
                             }}
-                            key="3xl"
+                            key={pokemon.id}
                             cursor="pointer"
                         >
                             <Box>
@@ -200,7 +255,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                                     maxW={{ base: "100%", sm: "200px" }}
                                     boxSize="300px"
                                     objectFit="contain"
-                                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+                                    src={pokemon.image}
                                     alt={pokemon.name}
                                 />
                             </Box>
@@ -247,7 +302,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                                     maxW={{ base: "100%", sm: "200px" }}
                                     boxSize="300px"
                                     objectFit="contain"
-                                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+                                    src={pokemon.image}
                                     alt={pokemon.name}
                                 />
                             </Box>
@@ -267,6 +322,24 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                                             {pokemon.type2}
                                         </Tag>
                                     )}
+                                </Flex>
+                            </Box>
+
+                            <Box width="100%" mt="20px">
+                                <Text fontWeight="bold" textAlign="center">
+                                    Skill
+                                </Text>
+                                <Flex justifyContent="center">
+                                    {pokemon.abilities.map((ability) => (
+                                        <Tag
+                                            mt="10px"
+                                            mr="3"
+                                            key={ability.id}
+                                            colorScheme="blue"
+                                        >
+                                            {ability.name}
+                                        </Tag>
+                                    ))}
                                 </Flex>
                             </Box>
 

@@ -1,5 +1,11 @@
+export interface abilities {
+    id: number;
+    name: string;
+    pokemon_id: number;
+}
+
 export interface Pokemon {
-    abbilities: string;
+    id: number;
     against_bug: number;
     against_dark: number;
     against_dragon: number;
@@ -14,7 +20,7 @@ export interface Pokemon {
     against_ice: number;
     against_normal: number;
     against_poison: number;
-    against_physic: number;
+    against_psychic: number;
     against_rock: number;
     against_steel: number;
     against_water: number;
@@ -30,7 +36,7 @@ export interface Pokemon {
     hp: number;
     japanese_name: string;
     name: string;
-    persentage_male: number;
+    percentage_male: number;
     pokedex_number: number;
     sp_attack: number;
     sp_defense: number;
@@ -40,6 +46,8 @@ export interface Pokemon {
     weight_kg: number;
     generation: number;
     is_legendary: boolean;
+    image: string;
+    abilities: abilities[];
 }
 
 export interface PokemonProps {
