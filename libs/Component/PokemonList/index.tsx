@@ -90,6 +90,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         "Mayoritas Famale",
         "Minoritas Famale",
     ]);
+    const [genderSelected, setGenderSelected] = useState<string[]>([]);
 
     const [classifications, setClassifications] = useState<string[]>([
         "Seed Pokémon",
@@ -118,6 +119,11 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         "Weed Pokémon",
         "Flower Pokémon",
     ]);
+    const [classificationSelected, setClassificationsSelected] = useState<
+        string[]
+    >([]);
+
+
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -133,108 +139,92 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         <div>
             <Box width="">
                 <Flex wrap="wrap">
-                    <FormControl mb="4" mt="4">
-                        <FormLabel ml="80px">Search By Name</FormLabel>
-                        <Input
-                            type="search"
-                            width="600px"
-                            ml="80px"
-                            placeholder="search pokemon"
-                            bgColor="InfoBackground"
-                            py="2"
-                            onChange={handleSearchChange}
-                        />
-                    </FormControl>
+                    <Box width="50%">
+                        <FormControl mb="4" mt="4">
+                            <FormLabel ml="80px">Search By Name</FormLabel>
+                            <Input
+                                type="search"
+                                width="600px"
+                                ml="80px"
+                                placeholder="search pokemon"
+                                bgColor="InfoBackground"
+                                py="2"
+                                onChange={handleSearchChange}
+                            />
+                        </FormControl>
 
-                    <FormControl mb="4" mt="4">
-                        <FormLabel ml="80px">Filter By Gender</FormLabel>
-                        <Box
-                            width="600px"
-                            ml="80px"
-                            mt="20px"
-                            mb="50px"
-                            height="55px"
-                            p="10px"
-                        >
-                            <Flex
-                                justifyContent="center"
-                                alignItems="center"
-                                wrap="wrap"
+                        <FormControl mb="4" mt="4">
+                            <FormLabel ml="80px">Filter By Gender</FormLabel>
+                            <Box
+                                width="600px"
+                                ml="80px"
+                                mt="20px"
+                                mb="50px"
+                                height="55px"
+                                p="10px"
                             >
-                                {genders.map((gender) => (
-                                    <Tag
-                                        size="lg"
-                                        borderRadius="full"
-                                        variant="solid"
-                                        colorScheme="green"
-                                        mx="5px"
-                                        my="5px"
-                                        cursor="pointer"
-                                    >
-                                        <TagLabel>{gender}</TagLabel>
-                                    </Tag>
-                                ))}
-                            </Flex>
-                        </Box>
-                        <Box
-                            width="600px"
-                            ml="80px"
-                            mt="30px"
-                            mb="40px"
-                            height="100px"
-                            p="10px"
-                            border="1px"
-                            borderRadius="20px"
-                        ></Box>
-                    </FormControl>
+                                <Flex
+                                    justifyContent="start"
+                                    alignItems="center"
+                                    wrap="wrap"
+                                >
+                                    {genders.map((gender) => (
+                                        <Tag
+                                            size="lg"
+                                            borderRadius="full"
+                                            colorScheme="green"
+                                            mx="5px"
+                                            my="5px"
+                                            cursor="pointer"
+                                        >
+                                            <TagLabel>{gender}</TagLabel>
+                                        </Tag>
+                                    ))}
+                                </Flex>
+                            </Box>
+                        </FormControl>
+                    </Box>
 
-                    <FormControl mb="4" mt="4">
-                        <FormLabel ml="80px">
-                            Filter By Classification
-                        </FormLabel>
-                        <Box
-                            width="600px"
-                            ml="80px"
-                            mt="20px"
-                            mb="300px"
-                            height="55px"
-                            p="10px"
-                        >
-                            <Flex
-                                justifyContent="center"
-                                alignItems="center"
-                                wrap="wrap"
+                    <Box width="50%">
+                        <FormControl mb="4" mt="4">
+                            <FormLabel ml="80px">
+                                Filter By Classification
+                            </FormLabel>
+                            <Box
+                                width="600px"
+                                ml="80px"
+                                mt="20px"
+                                mb="300px"
+                                height="55px"
+                                p="10px"
                             >
-                                {classifications.map((classification) => (
-                                    <Tag
-                                        size="lg"
-                                        borderRadius="full"
-                                        variant="solid"
-                                        colorScheme="blue"
-                                        mx="5px"
-                                        my="5px"
-                                        cursor="pointer"
-                                    >
-                                        <TagLabel>{classification}</TagLabel>
-                                    </Tag>
-                                ))}
-                            </Flex>
-                        </Box>
-                        <Box
-                            width="600px"
-                            ml="80px"
-                            mt="30px"
-                            mb="40px"
-                            height="100px"
-                            p="10px"
-                            border="1px"
-                            borderRadius="20px"
-                        ></Box>
-                    </FormControl>
+                                <Flex
+                                    justifyContent="start"
+                                    alignItems="center"
+                                    wrap="wrap"
+                                >
+                                    {classifications.map((classification) => (
+                                        <Tag
+                                            size="lg"
+                                            borderRadius="full"
+                                            colorScheme="blue"
+                                            mx="5px"
+                                            my="5px"
+                                            cursor="pointer"
+                                        >
+                                            <TagLabel>
+                                                {classification}
+                                            </TagLabel>
+                                        </Tag>
+                                    ))}
+                                </Flex>
+                            </Box>
+                        </FormControl>
+                    </Box>
                 </Flex>
             </Box>
 
-            <Box mt="10">
+            {/* <Box mt="10">
                 <Flex wrap="wrap" alignItems="center" justifyContent="center">
                     {filteredPokemons.map((pokemon) => (
                         <Card
@@ -476,7 +466,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                         <ModalFooter></ModalFooter>
                     </ModalContent>
                 </Modal>
-            </Box>
+            </Box> */}
         </div>
     );
 };
