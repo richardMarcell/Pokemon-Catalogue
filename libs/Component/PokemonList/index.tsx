@@ -35,8 +35,11 @@ interface PokemonProps {
     pokemons: Pokemon[];
 }
 
-const PokemonList = ({ pokemons }: PokemonProps) => {
+const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
+    // state untuk menyimpan karakter pencarian pokemon
     const [searchTerm, setSearchTerm] = useState("");
+
+    // state untuk menyimpan detail pokemon
     const [pokemon, setPokemon] = useState<Pokemon>({
         id: 0,
         against_bug: 0,
@@ -83,6 +86,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         abilities: [],
     });
 
+    // state untuk menyimpan kriteria gender
     const [genders, setGenders] = useState<string[]>([
         "Mayoritas Male",
         "Minoritas Male",
@@ -90,8 +94,8 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         "Mayoritas Famale",
         "Minoritas Famale",
     ]);
-    const [genderSelected, setGenderSelected] = useState<string[]>([]);
 
+    // state untuk menyimpan jenis klasifikasi pokemon
     const [classifications, setClassifications] = useState<string[]>([
         "Seed Pokémon",
         "Lizard Pokémon",
@@ -119,21 +123,72 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
         "Weed Pokémon",
         "Flower Pokémon",
     ]);
-    const [classificationSelected, setClassificationsSelected] = useState<
+
+    // state untuk menyimpan pilihan chip user
+    const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
+    const [selectedClassifications, setSelectedClassifications] = useState<
         string[]
     >([]);
 
+    // function untuk menghandle chip pilihan user pada filter gender
+    const handleGenderTagSelected = (gender: string) => {
+        if (selectedGenders.includes(gender)) {
+            setSelectedGenders(selectedGenders.filter((g) => g !== gender));
+        } else {
+            setSelectedGenders([...selectedGenders, gender]);
+        }
+    };
 
+    // function untuk menghandle chip pilihan yser pada filter classification
+    const handleClassificationTagSelected = (classification: string) => {
+        if (selectedClassifications.includes(classification)) {
+            setSelectedClassifications(
+                selectedClassifications.filter((c) => c !== classification)
+            );
+        } else {
+            setSelectedClassifications([
+                ...selectedClassifications,
+                classification,
+            ]);
+        }
+    };
 
+    // component modal chakra ui
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    // function untuk menghandle pencarian dengan plain text
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredPokemons = pokemons.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // variable untuk menyimpan hasil pokemon yang sudah di filter
+    const filteredPokemons: Pokemon[] = pokemons.filter((pokemon) => {
+        // Memfilter Nama Pokemon yang disearch
+        const isPokemonNameMatch: boolean = pokemon.name
+            .toLocaleLowerCase()
+            .includes(searchTerm.toLowerCase());
+
+        // Memfilter berdasarkan range percentage male
+        const genderMatch =
+            selectedGenders.length < 1
+                ? pokemon
+                : selectedGenders.includes(
+                      "Mayoritas Male" || "Minoritas Famale"
+                  )
+                ? pokemon.percentage_male > 50
+                : selectedGenders.includes("Balance")
+                ? pokemon.percentage_male == 50
+                : pokemon.percentage_male < 50;
+
+        // Memfilter berdasarkan classification pokemon
+        const isClassificationPokemonMatch: boolean =
+            selectedClassifications.length == 0 ||
+            selectedClassifications.includes(pokemon.classification);
+
+        return (
+            isPokemonNameMatch && isClassificationPokemonMatch && genderMatch
+        );
+    });
 
     return (
         <div>
@@ -170,12 +225,20 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                                 >
                                     {genders.map((gender) => (
                                         <Tag
+                                            key={gender}
                                             size="lg"
                                             borderRadius="full"
-                                            colorScheme="green"
+                                            colorScheme={
+                                                selectedGenders.includes(gender)
+                                                    ? "green"
+                                                    : "gray"
+                                            }
                                             mx="5px"
                                             my="5px"
                                             cursor="pointer"
+                                            onClick={() =>
+                                                handleGenderTagSelected(gender)
+                                            }
                                         >
                                             <TagLabel>{gender}</TagLabel>
                                         </Tag>
@@ -205,12 +268,24 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                                 >
                                     {classifications.map((classification) => (
                                         <Tag
+                                            key={classification}
                                             size="lg"
                                             borderRadius="full"
-                                            colorScheme="blue"
+                                            colorScheme={
+                                                selectedClassifications.includes(
+                                                    classification
+                                                )
+                                                    ? "blue"
+                                                    : "gray"
+                                            }
                                             mx="5px"
                                             my="5px"
                                             cursor="pointer"
+                                            onClick={() =>
+                                                handleClassificationTagSelected(
+                                                    classification
+                                                )
+                                            }
                                         >
                                             <TagLabel>
                                                 {classification}
@@ -224,7 +299,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                 </Flex>
             </Box>
 
-            {/* <Box mt="10">
+            <Box mt="10">
                 <Flex wrap="wrap" alignItems="center" justifyContent="center">
                     {filteredPokemons.map((pokemon) => (
                         <Card
@@ -466,7 +541,7 @@ const PokemonList = ({ pokemons }: PokemonProps) => {
                         <ModalFooter></ModalFooter>
                     </ModalContent>
                 </Modal>
-            </Box> */}
+            </Box>
         </div>
     );
 };
