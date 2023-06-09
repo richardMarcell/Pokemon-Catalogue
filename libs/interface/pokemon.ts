@@ -51,7 +51,15 @@ export interface Pokemon {
 }
 
 export interface PokemonProps {
-    page: number;
-    hasNextPage: boolean;
     pokemons: Pokemon[];
+}
+
+export interface PokemonHeightFilter {
+    operator: string;
+    valueOfPokemonHeight: number;
+}
+
+export interface PokemonWeightFilter {
+    operator: string;
+    valueOfPokemonWeight: number;
 }

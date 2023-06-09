@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import {
     Box,
     Card,
@@ -16,28 +16,31 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Textarea,
-    Button,
-} from "@chakra-ui/react";
-import { Pokemon } from "../../interface/pokemon";
-import { FormControl, FormLabel, Input } from "@chakra-ui/react";
-import { ChangeEvent } from "react";
-import {
+    FormControl,
+    FormLabel,
+    Input,
     Tag,
     TagLabel,
-    TagLeftIcon,
-    TagRightIcon,
-    TagCloseButton,
+    Select as ChakraSelect,
+    Button,
 } from "@chakra-ui/react";
-import { color } from "framer-motion";
-
-interface PokemonProps {
-    pokemons: Pokemon[];
-}
+import {
+    Pokemon,
+    PokemonHeightFilter,
+    PokemonProps,
+    PokemonWeightFilter,
+} from "../../interface/pokemon";
+import Select from "react-select";
+import FilterByName from "../PokemonFilter/FilterByName";
+import FilterByHeight from "../PokemonFilter/FilterByHeight";
+import FilterByWeight from "../PokemonFilter/FilterByWeight";
 
 const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
+    // component modal chakra ui
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     // state untuk menyimpan karakter pencarian pokemon
-    const [searchTerm, setSearchTerm] = useState("");
+    const [pokemonNameSearched, setPokemonNameSearched] = useState("");
 
     // state untuk menyimpan detail pokemon
     const [pokemon, setPokemon] = useState<Pokemon>({
@@ -86,94 +89,148 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
         abilities: [],
     });
 
-    // state untuk menyimpan kriteria gender
-    const [genders, setGenders] = useState<string[]>([
-        "Mayoritas Male",
-        "Minoritas Male",
-        "Balance",
-        "Mayoritas Famale",
-        "Minoritas Famale",
-    ]);
-
-    // state untuk menyimpan jenis klasifikasi pokemon
-    const [classifications, setClassifications] = useState<string[]>([
-        "Seed Pokémon",
-        "Lizard Pokémon",
-        "Flame Pokémon",
-        "Tiny Turtle Pokémon",
-        "Turtle Pokémon",
-        "Shellfish Pokémon",
-        "Worm Pokémon",
-        "Cocoon Pokémon",
-        "Butterfly Pokémon",
-        "Hairy Pokémon",
-        "Poison Bee Pokémon",
-        "Tiny Bird Pokémon",
-        "Bird Pokémon",
-        "Mouse Pokémon",
-        "Beak Pokémon",
-        "Snake Pokémon",
-        "Cobra Pokémon",
-        "Poison Pin Pokémon",
-        "Drill Pokémon",
-        "Fairy Pokémon",
-        "Fox Pokémon",
-        "Balloon Pokémon",
-        "Bat Pokémon",
-        "Weed Pokémon",
-        "Flower Pokémon",
-    ]);
+    const filterOptionsMultiSelect = {
+        genders: [
+            { value: "Mayoritas Male", label: "Mayoritas Male" },
+            { value: "Minoritas Male", label: "Minoritas Male" },
+            { value: "Balance", label: "Balance" },
+            { value: "Mayoritas Female", label: "Mayoritas Female" },
+            { value: "Minoritas Female", label: "Minoritas Female" },
+        ],
+        classifications: [
+            { value: "Seed Pokémon", label: "Seed Pokémon" },
+            { value: "Lizard Pokémon", label: "Lizard Pokémon" },
+            { value: "Flame Pokémon", label: "Flame Pokémon" },
+            { value: "Tiny Turtle Pokémon", label: "Tiny Turtle Pokémon" },
+            { value: "Turle Pokémon", label: "Turle Pokémon" },
+            { value: "Worm Pokémon", label: "Worm Pokémon" },
+            { value: "Shellfish Pokémon", label: "Shellfish Pokémon" },
+            { value: "Cocoon Pokémon", label: "Cocoon Pokémon" },
+            { value: "Butterfly Pokémon", label: "Butterfly Pokémon" },
+            { value: "Hairy Pokémon", label: "Hairy Pokémon" },
+            { value: "Poison Pokémon", label: "Poison Pokémon" },
+            { value: "Tiny Bird Pokémon", label: "Tiny Bird Pokémon" },
+            { value: "Bird Pokémon", label: "Bird Pokémon" },
+            { value: "Mouse Pokémon", label: "Mouse Pokémon" },
+            { value: "Beak Pokémon", label: "Beak Pokémon" },
+            { value: "Snake Pokémon", label: "Snake Pokémon" },
+            { value: "Cobra Pokémon", label: "Cobra Pokémon" },
+            { value: "Poison Pin Pokémon", label: "Poison Pin Pokémon" },
+            { value: "Drill Pokémon", label: "Drill Pokémon" },
+            { value: "Fairy Pokémon", label: "Fairy Pokémon" },
+            { value: "Fox Pokémon", label: "Fox Pokémon" },
+            { value: "Balloon Pokémon", label: "Balloon Pokémon" },
+            { value: "Bat Pokémon", label: "Bat Pokémon" },
+            { value: "Weed Pokémon", label: "Weed Pokémon" },
+            { value: "Flower Pokémon", label: "Flower Pokémon" },
+            { value: "Duck Pokémon", label: "Duck Pokémon" },
+        ],
+        type: [
+            { value: "grass", label: "grass" },
+            { value: "fire", label: "fire" },
+            { value: "water", label: "water" },
+            { value: "bug", label: "bug" },
+            { value: "normal", label: "normal" },
+            { value: "poison", label: "poison" },
+            { value: "electric", label: "electric" },
+            { value: "ground", label: "ground" },
+            { value: "fairy", label: "fairy" },
+            { value: "fighting", label: "fighting" },
+            { value: "psychic", label: "psychic" },
+            { value: "rock", label: "rock" },
+            { value: "ghost", label: "ghost" },
+            { value: "ice", label: "ice" },
+            { value: "dragon", label: "dragon" },
+            { value: "dark", label: "dark" },
+            { value: "steel", label: "steel" },
+            { value: "flying", label: "flying" },
+        ],
+    };
 
     // state untuk menyimpan pilihan chip user
     const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
     const [selectedClassifications, setSelectedClassifications] = useState<
         string[]
     >([]);
-
-    // function untuk menghandle chip pilihan user pada filter gender
-    const handleGenderTagSelected = (gender: string) => {
-        if (selectedGenders.includes(gender)) {
-            setSelectedGenders(selectedGenders.filter((g) => g !== gender));
-        } else {
-            setSelectedGenders([...selectedGenders, gender]);
-        }
-    };
-
-    // function untuk menghandle chip pilihan yser pada filter classification
-    const handleClassificationTagSelected = (classification: string) => {
-        if (selectedClassifications.includes(classification)) {
-            setSelectedClassifications(
-                selectedClassifications.filter((c) => c !== classification)
-            );
-        } else {
-            setSelectedClassifications([
-                ...selectedClassifications,
-                classification,
-            ]);
-        }
-    };
-
-    // component modal chakra ui
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
     // function untuk menghandle pencarian dengan plain text
-    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value);
+    const handleSearchPokemonNameChange = (
+        event: ChangeEvent<HTMLInputElement>
+    ) => {
+        setPokemonNameSearched(event.target.value);
+    };
+
+    // state untuk menyimpan component input filter Height Pokemon
+    const [pokemonHeightFilters, setPokemonHeightFilters] = useState<
+        PokemonHeightFilter[]
+    >([
+        {
+            operator: "",
+            valueOfPokemonHeight: 0,
+        },
+    ]);
+
+    // state untuk menyimpan compoenent input filter Weight Pokemon
+    const [pokemonWeightFilters, setPokemonWeightFilters] = useState<
+        PokemonWeightFilter[]
+    >([
+        {
+            operator: "",
+            valueOfPokemonWeight: 0,
+        },
+    ]);
+
+    // function untuk menambah inputan filter dengan height pokemon
+    const addPokemonHeightFilter = () => {
+        setPokemonHeightFilters([
+            ...pokemonHeightFilters,
+            { operator: "", valueOfPokemonHeight: 0 },
+        ]);
+    };
+
+    const addPokemonWeightFilter = () => {
+        setPokemonWeightFilters([
+            ...pokemonWeightFilters,
+            { operator: "", valueOfPokemonWeight: 0 },
+        ]);
+    };
+
+    // function untuk menghandle perubahan pada filter height pokemon
+    const handlePokemonHeightFilterChange = (
+        index: number,
+        field: string,
+        value: number | string
+    ) => {
+        const heightFilterUpdated: any[] = [...pokemonHeightFilters];
+        heightFilterUpdated[index][field] = value;
+        setPokemonHeightFilters(heightFilterUpdated);
+    };
+
+    // function untuk menghandle perubahan pada filter weight pokemon
+    const handlePokemonWeightFilterChange = (
+        index: number,
+        field: string,
+        value: number | string
+    ) => {
+        const weightFilterUpdated: any[] = [...pokemonWeightFilters];
+        weightFilterUpdated[index][field] = value;
+        setPokemonWeightFilters(weightFilterUpdated);
     };
 
     // variable untuk menyimpan hasil pokemon yang sudah di filter
     const filteredPokemons: Pokemon[] = pokemons.filter((pokemon) => {
         // Memfilter Nama Pokemon yang disearch
         const isPokemonNameMatch: boolean = pokemon.name
-            .toLocaleLowerCase()
-            .includes(searchTerm.toLowerCase());
+            .toLowerCase()
+            .includes(pokemonNameSearched.toLowerCase());
 
         // Memfilter berdasarkan range percentage male
-        const genderMatch =
+        const isPokemonGenderMatch: boolean | Pokemon =
             selectedGenders.length < 1
                 ? pokemon
                 : selectedGenders.includes(
-                      "Mayoritas Male" || "Minoritas Famale"
+                      "Mayoritas Male" || "Minoritas Female"
                   )
                 ? pokemon.percentage_male > 50
                 : selectedGenders.includes("Balance")
@@ -181,119 +238,158 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                 : pokemon.percentage_male < 50;
 
         // Memfilter berdasarkan classification pokemon
-        const isClassificationPokemonMatch: boolean =
+        const isPokemonClassificationMatch: boolean =
             selectedClassifications.length == 0 ||
             selectedClassifications.includes(pokemon.classification);
 
+        // Memfilter berdasarkan type Pokemon
+        const isPokemonTypeMatch: boolean =
+            selectedTypes.length == 0 ||
+            selectedTypes.includes(pokemon.type1) ||
+            selectedTypes.includes(pokemon.type2);
+
+        // Memfilter berdasarkan Pokemon Height
+        let isPokemonHeightMatch: boolean = false;
+        for (let i = 0; i < pokemonHeightFilters.length; i++) {
+            const pokemonHeightFiltered = pokemonHeightFilters[i];
+            if (pokemonHeightFiltered.operator === "<") {
+                isPokemonHeightMatch =
+                    pokemon.height_m <
+                    pokemonHeightFiltered.valueOfPokemonHeight;
+            } else if (pokemonHeightFiltered.operator === ">") {
+                isPokemonHeightMatch =
+                    pokemon.height_m >
+                    pokemonHeightFiltered.valueOfPokemonHeight;
+            } else if (pokemonHeightFiltered.operator === "=") {
+                isPokemonHeightMatch =
+                    pokemon.height_m ==
+                    pokemonHeightFiltered.valueOfPokemonHeight;
+            } else if (pokemonHeightFiltered.operator === ">=") {
+                isPokemonHeightMatch =
+                    pokemon.height_m >=
+                    pokemonHeightFiltered.valueOfPokemonHeight;
+            } else if (pokemonHeightFiltered.operator === "<=") {
+                isPokemonHeightMatch =
+                    pokemon.height_m <=
+                    pokemonHeightFiltered.valueOfPokemonHeight;
+            } else {
+                isPokemonHeightMatch = true;
+            }
+        }
+
+        // Memfilter berdasarkan Pokemon Weight
+        let isPokemonWeightMatch: boolean = false;
+        for (let i = 0; i < pokemonWeightFilters.length; i++) {
+            const pokemonWeightFiltered = pokemonWeightFilters[i];
+            if (pokemonWeightFiltered.operator === ">") {
+                isPokemonWeightMatch =
+                    pokemon.weight_kg >
+                    pokemonWeightFiltered.valueOfPokemonWeight;
+            } else if (pokemonWeightFiltered.operator === "<") {
+                isPokemonWeightMatch =
+                    pokemon.weight_kg <
+                    pokemonWeightFiltered.valueOfPokemonWeight;
+            } else if (pokemonWeightFiltered.operator === "=") {
+                isPokemonWeightMatch =
+                    pokemon.weight_kg ==
+                    pokemonWeightFiltered.valueOfPokemonWeight;
+            } else if (pokemonWeightFiltered.operator === ">=") {
+                isPokemonWeightMatch =
+                    pokemon.weight_kg >=
+                    pokemonWeightFiltered.valueOfPokemonWeight;
+            } else if (pokemonWeightFiltered.operator === "<=") {
+                isPokemonWeightMatch =
+                    pokemon.weight_kg <=
+                    pokemonWeightFiltered.valueOfPokemonWeight;
+            } else {
+                isPokemonWeightMatch = true;
+            }
+        }
+
         return (
-            isPokemonNameMatch && isClassificationPokemonMatch && genderMatch
+            isPokemonNameMatch &&
+            isPokemonClassificationMatch &&
+            isPokemonGenderMatch &&
+            isPokemonTypeMatch &&
+            isPokemonHeightMatch &&
+            isPokemonWeightMatch
         );
     });
 
     return (
         <div>
-            <Box width="">
+            <Box width="100%">
                 <Flex wrap="wrap">
-                    <Box width="50%">
-                        <FormControl mb="4" mt="4">
-                            <FormLabel ml="80px">Search By Name</FormLabel>
-                            <Input
-                                type="search"
-                                width="600px"
-                                ml="80px"
-                                placeholder="search pokemon"
-                                bgColor="InfoBackground"
-                                py="2"
-                                onChange={handleSearchChange}
-                            />
-                        </FormControl>
+                    <FilterByName
+                        handleSearchPokemonNameChange={
+                            handleSearchPokemonNameChange
+                        }
+                    />
 
-                        <FormControl mb="4" mt="4">
-                            <FormLabel ml="80px">Filter By Gender</FormLabel>
-                            <Box
-                                width="600px"
-                                ml="80px"
-                                mt="20px"
-                                mb="50px"
-                                height="55px"
-                                p="10px"
-                            >
-                                <Flex
-                                    justifyContent="start"
-                                    alignItems="center"
-                                    wrap="wrap"
-                                >
-                                    {genders.map((gender) => (
-                                        <Tag
-                                            key={gender}
-                                            size="lg"
-                                            borderRadius="full"
-                                            colorScheme={
-                                                selectedGenders.includes(gender)
-                                                    ? "green"
-                                                    : "gray"
-                                            }
-                                            mx="5px"
-                                            my="5px"
-                                            cursor="pointer"
-                                            onClick={() =>
-                                                handleGenderTagSelected(gender)
-                                            }
-                                        >
-                                            <TagLabel>{gender}</TagLabel>
-                                        </Tag>
-                                    ))}
-                                </Flex>
-                            </Box>
+                    <Box width="100%" mt="30px">
+                        <Flex justifyContent="space-between" px="70px">
+                            <FilterByHeight
+                                pokemonHeightFilters={pokemonHeightFilters}
+                                handlePokemonHeightFilterChange={
+                                    handlePokemonHeightFilterChange
+                                }
+                                addPokemonHeightFilter={addPokemonHeightFilter}
+                            />
+                            <FilterByWeight
+                                pokemonWeightFilters={pokemonWeightFilters}
+                                addPokemonWeightFilter={addPokemonWeightFilter}
+                                handlePokemonWeightFilterChange={
+                                    handlePokemonWeightFilterChange
+                                }
+                            />
+                        </Flex>
+                    </Box>
+
+                    <Box mt="30px" mx="auto" width="90%">
+                        <FormLabel>Filter By Gender</FormLabel>
+                        <Select
+                            options={filterOptionsMultiSelect.genders}
+                            isMulti
+                            onChange={(genderOptions) =>
+                                setSelectedGenders(
+                                    genderOptions.map((gender) => gender.value)
+                                )
+                            }
+                        />
+                    </Box>
+
+                    <Box mt="30px" mx="auto" width="90%">
+                        <FormControl>
+                            <FormLabel>Filter By Classification</FormLabel>
+                            <Select
+                                options={
+                                    filterOptionsMultiSelect.classifications
+                                }
+                                isMulti
+                                onChange={(classificationOptions) =>
+                                    setSelectedClassifications(
+                                        classificationOptions.map(
+                                            (classification) =>
+                                                classification.value
+                                        )
+                                    )
+                                }
+                            />
                         </FormControl>
                     </Box>
 
-                    <Box width="50%">
-                        <FormControl mb="4" mt="4">
-                            <FormLabel ml="80px">
-                                Filter By Classification
-                            </FormLabel>
-                            <Box
-                                width="600px"
-                                ml="80px"
-                                mt="20px"
-                                mb="300px"
-                                height="55px"
-                                p="10px"
-                            >
-                                <Flex
-                                    justifyContent="start"
-                                    alignItems="center"
-                                    wrap="wrap"
-                                >
-                                    {classifications.map((classification) => (
-                                        <Tag
-                                            key={classification}
-                                            size="lg"
-                                            borderRadius="full"
-                                            colorScheme={
-                                                selectedClassifications.includes(
-                                                    classification
-                                                )
-                                                    ? "blue"
-                                                    : "gray"
-                                            }
-                                            mx="5px"
-                                            my="5px"
-                                            cursor="pointer"
-                                            onClick={() =>
-                                                handleClassificationTagSelected(
-                                                    classification
-                                                )
-                                            }
-                                        >
-                                            <TagLabel>
-                                                {classification}
-                                            </TagLabel>
-                                        </Tag>
-                                    ))}
-                                </Flex>
-                            </Box>
+                    <Box mt="30px" mx="auto" width="90%">
+                        <FormControl>
+                            <FormLabel>Filter By Type</FormLabel>
+                            <Select
+                                options={filterOptionsMultiSelect.type}
+                                isMulti
+                                onChange={(typeOptions) =>
+                                    setSelectedTypes(
+                                        typeOptions.map((type) => type.value)
+                                    )
+                                }
+                            />
                         </FormControl>
                     </Box>
                 </Flex>
