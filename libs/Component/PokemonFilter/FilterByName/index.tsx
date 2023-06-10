@@ -34,7 +34,7 @@ const FilterByName: React.FC<FilterByName> = ({
 }) => {
     return (
         <div>
-            <Box width="100%">
+            <Box width={{ lg: "7xl", md:"xl" }}>
                 <FormControl mt="4">
                     <FormLabel ml="70px">Search By Name</FormLabel>
                     <Input
