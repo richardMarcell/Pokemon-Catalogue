@@ -30,10 +30,18 @@ import {
     PokemonProps,
     PokemonWeightFilter,
 } from "../../interface/pokemon";
-import Select from "react-select";
+import Select, { MultiValue } from "react-select";
 import FilterByName from "../PokemonFilter/FilterByName";
 import FilterByHeight from "../PokemonFilter/FilterByHeight";
 import FilterByWeight from "../PokemonFilter/FilterByWeight";
+import { motion } from "framer-motion";
+
+type SelectedOption = {
+    value: string;
+    label: string;
+};
+
+const MotionBox = motion(Box);
 
 const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
     // component modal chakra ui
@@ -89,13 +97,40 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
         abilities: [],
     });
 
+    // state untuk menyimpan pilihan chip user
+    const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
+    const [selectedClassifications, setSelectedClassifications] = useState<
+        string[]
+    >([]);
+    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
     const filterOptionsMultiSelect = {
         genders: [
-            { value: "Mayoritas Male", label: "Mayoritas Male" },
-            { value: "Minoritas Male", label: "Minoritas Male" },
-            { value: "Balance", label: "Balance" },
-            { value: "Mayoritas Female", label: "Mayoritas Female" },
-            { value: "Minoritas Female", label: "Minoritas Female" },
+            {
+                value: "Mayoritas Male",
+                label: "Mayoritas Male",
+                isDisabled: selectedGenders.includes("Minoritas Female"),
+            },
+            {
+                value: "Minoritas Male",
+                label: "Minoritas Male",
+                isDisabled: selectedGenders.includes("Mayoritas Female"),
+            },
+            {
+                value: "Balance",
+                label: "Balance",
+                isDisabled: false,
+            },
+            {
+                value: "Mayoritas Female",
+                label: "Mayoritas Female",
+                isDisabled: selectedGenders.includes("Minoritas Male"),
+            },
+            {
+                value: "Minoritas Female",
+                label: "Minoritas Female",
+                isDisabled: selectedGenders.includes("Mayoritas Male"),
+            },
         ],
         classifications: [
             { value: "Seed Pokémon", label: "Seed Pokémon" },
@@ -147,18 +182,44 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
         ],
     };
 
-    // state untuk menyimpan pilihan chip user
-    const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
-    const [selectedClassifications, setSelectedClassifications] = useState<
-        string[]
-    >([]);
-    const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-
     // function untuk menghandle pencarian dengan plain text
     const handleSearchPokemonNameChange = (
         event: ChangeEvent<HTMLInputElement>
     ) => {
         setPokemonNameSearched(event.target.value);
+    };
+
+    // function untuk menghandle perubahan pada filter gender
+    const handleGenderFilterChange = (
+        genderOptions: MultiValue<{ value: string; label: string }>
+    ) => {
+        const selectedGenderOptions = genderOptions.map(
+            (gender) => gender.value
+        );
+        setSelectedGenders(selectedGenderOptions);
+    };
+
+    // function untuk menghandle perubahan pada filter classification
+    const handleClassificationFilterChange = (
+        classificationOptions: MultiValue<{ value: string; label: string }>
+    ) => {
+        setSelectedClassifications(
+            classificationOptions.map(
+                (classification: { value: string; label: string }) =>
+                    classification.value
+            )
+        );
+    };
+
+    // function untuk menghandle perubahan pada filter type
+    const handleTypeFilterChange = (
+        typeOptions: MultiValue<{ value: string; label: string }>
+    ) => {
+        setSelectedTypes(
+            typeOptions.map(
+                (type: { value: string; label: string }) => type.value
+            )
+        );
     };
 
     // state untuk menyimpan component input filter Height Pokemon
@@ -350,11 +411,7 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                         <Select
                             options={filterOptionsMultiSelect.genders}
                             isMulti
-                            onChange={(genderOptions) =>
-                                setSelectedGenders(
-                                    genderOptions.map((gender) => gender.value)
-                                )
-                            }
+                            onChange={handleGenderFilterChange}
                         />
                     </Box>
 
@@ -366,14 +423,7 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                                     filterOptionsMultiSelect.classifications
                                 }
                                 isMulti
-                                onChange={(classificationOptions) =>
-                                    setSelectedClassifications(
-                                        classificationOptions.map(
-                                            (classification) =>
-                                                classification.value
-                                        )
-                                    )
-                                }
+                                onChange={handleClassificationFilterChange}
                             />
                         </FormControl>
                     </Box>
@@ -384,11 +434,7 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                             <Select
                                 options={filterOptionsMultiSelect.type}
                                 isMulti
-                                onChange={(typeOptions) =>
-                                    setSelectedTypes(
-                                        typeOptions.map((type) => type.value)
-                                    )
-                                }
+                                onChange={handleTypeFilterChange}
                             />
                         </FormControl>
                     </Box>
@@ -411,14 +457,21 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                             cursor="pointer"
                         >
                             <Box>
-                                <Image
-                                    mx="auto"
-                                    maxW={{ base: "100%", sm: "200px" }}
-                                    boxSize="300px"
-                                    objectFit="contain"
-                                    src={pokemon.image}
-                                    alt={pokemon.name}
-                                />
+                                <MotionBox
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <Image
+                                        mx="auto"
+                                        maxW={{ base: "100%", sm: "200px" }}
+                                        boxSize="300px"
+                                        objectFit="contain"
+                                        src={pokemon.image}
+                                        alt={pokemon.name}
+                                        loading="lazy"
+                                    />
+                                </MotionBox>
                             </Box>
                             <Text textAlign="center">
                                 {pokemon.japanese_name}
@@ -458,14 +511,21 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                         <ModalCloseButton />
                         <ModalBody>
                             <Box>
-                                <Image
-                                    mx="auto"
-                                    maxW={{ base: "100%", sm: "200px" }}
-                                    boxSize="300px"
-                                    objectFit="contain"
-                                    src={pokemon.image}
-                                    alt={pokemon.name}
-                                />
+                                <MotionBox
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <Image
+                                        mx="auto"
+                                        maxW={{ base: "100%", sm: "200px" }}
+                                        boxSize="300px"
+                                        objectFit="contain"
+                                        src={pokemon.image}
+                                        alt={pokemon.name}
+                                        loading="lazy"
+                                    />
+                                </MotionBox>
                             </Box>
                             <Text textAlign="center" fontSize="2xl">
                                 {pokemon.japanese_name}
