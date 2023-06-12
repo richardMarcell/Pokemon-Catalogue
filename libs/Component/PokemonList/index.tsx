@@ -388,7 +388,11 @@ const PokemonList = ({ pokemons }: PokemonProps): JSX.Element => {
                     />
 
                     <Box width="100%" mt="30px">
-                        <Flex justifyContent="space-between" wrap="wrap" px="70px">
+                        <Flex
+                            justifyContent="space-between"
+                            wrap="wrap"
+                            px="70px"
+                        >
                             <FilterByHeight
                                 pokemonHeightFilters={pokemonHeightFilters}
                                 handlePokemonHeightFilterChange={

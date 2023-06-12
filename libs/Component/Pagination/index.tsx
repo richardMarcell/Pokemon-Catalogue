@@ -5,7 +5,6 @@ interface PaginationProps {
     totalPages: number;
     handleNext: () => void;
     handlePrevious: () => void;
-    handlePageClick: (pageNumber: number) => void;
     renderPageNumber: () => JSX.Element[];
 }
 
@@ -14,14 +13,13 @@ const Pagination = ({
     totalPages,
     handleNext,
     handlePrevious,
-    handlePageClick,
     renderPageNumber,
 }: PaginationProps) => {
     return (
         <Flex justifyContent="center" mt="5">
             <Box>
                 <Button
-                    disabled={currentPage === 1}
+                    disabled={currentPage === 1 ? true : false}
                     colorScheme="blue"
                     onClick={handlePrevious}
                     mx="1"
