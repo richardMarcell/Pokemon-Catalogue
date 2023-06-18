@@ -70,7 +70,7 @@ const FilterPokemonByGenderFromServer = () => {
     return (
         <div>
             <form action="" method="post" onSubmit={handleSubmit}>
-                <FormControl ml="80px" mt="20px">
+                <FormControl mt="20px">
                     <FormLabel>Filter By Gender</FormLabel>
                     <Flex>
                         <Select

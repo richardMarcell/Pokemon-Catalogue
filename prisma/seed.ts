@@ -77,7 +77,15 @@ const getPokemonImagesByHashMap = (
         pokemonImages.set(pokemonImage.name, pokemonImage.image_url);
     });
 
-    return pokemonImages.get(pokemonName);
+    if (
+        pokemonImages.get(pokemonName) === undefined ||
+        pokemonImages.get(pokemonName) === "" ||
+        pokemonImages.get(pokemonName) === null
+    ) {
+        return "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/1024px-Pok%C3%A9_Ball_icon.svg.png";
+    } else {
+        return pokemonImages.get(pokemonName);
+    }
 };
 
 export const main = async () => {

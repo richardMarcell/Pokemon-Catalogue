@@ -28,8 +28,8 @@ const FilterByHeight: React.FC<FilterByHeight> = ({
     return (
         <div>
             <Box width="100%">
-                <FormLabel>Filter By Height</FormLabel>
                 <FormControl>
+                    <FormLabel>Filter By Height</FormLabel>
                     {pokemonHeightFilters.map((pokemonHeightFilter, index) => (
                         <Flex key={index} mt="10px" alignItems="center">
                             <ChakraSelect

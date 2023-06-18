@@ -20,12 +20,16 @@ interface FilterByWeight {
     addPokemonWeightFilter: () => void;
 }
 
-const FilterByWeight: React.FC<FilterByWeight> = ({pokemonWeightFilters, handlePokemonWeightFilterChange, addPokemonWeightFilter}) => {
+const FilterByWeight: React.FC<FilterByWeight> = ({
+    pokemonWeightFilters,
+    handlePokemonWeightFilterChange,
+    addPokemonWeightFilter,
+}) => {
     return (
         <div>
             <Box width="100%">
-                <FormLabel>Filter By Weight</FormLabel>
                 <FormControl>
+                    <FormLabel>Filter By Weight</FormLabel>
                     {pokemonWeightFilters.map((pokemonWeightFilter, index) => (
                         <Flex key={index} alignItems="center" mt="10px">
                             <ChakraSelect

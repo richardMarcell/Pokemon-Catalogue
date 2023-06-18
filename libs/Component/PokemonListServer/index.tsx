@@ -21,15 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { Pokemon, PokemonProps } from "../../interface/pokemon";
 import { motion } from "framer-motion";
-import FilterByNameFromServer from "../PokemonFilterFromServer/FilterByName";
-import FilterPokemonByTypeFromServer from "../PokemonFilterFromServer/FilterByType";
-import FilterPokemonByClassificationFromServer from "../PokemonFilterFromServer/FilterByClassification";
-import FilterPokemonByGenderFromServer from "../PokemonFilterFromServer/FilterByGender";
-
-type SelectedOption = {
-    value: string;
-    label: string;
-};
+import PokemonFilterServer from "../PokemonFilterServer";
 
 const MotionBox = motion(Box);
 
@@ -85,10 +77,7 @@ const PokemonListServer = ({ pokemons }: PokemonProps): JSX.Element => {
     });
     return (
         <div>
-            <FilterByNameFromServer />
-            <FilterPokemonByGenderFromServer />
-            <FilterPokemonByTypeFromServer />
-            <FilterPokemonByClassificationFromServer />
+            <PokemonFilterServer />
             <Box mt="10">
                 <Flex wrap="wrap" alignItems="center" justifyContent="center">
                     {pokemons.map((pokemon) => (
